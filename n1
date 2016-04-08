@@ -1,0 +1,57 @@
+  //insert
+Orders_T->Insert();
+Form1->ShowModal();
+	
+	//edit
+Orders_T->Edit();
+Form3->ShowModal();
+
+  //delete
+if (Application->MessageBox(L"Удалить запись?", L"Удаление",
+			MB_ICONSTOP + MB_YESNO) == IDYES)
+		dm->Orders_T->Delete();
+	else
+		Abort();
+  
+  //post
+if (Orders_T->Modified) {
+		Orders_T->Post();
+	}
+	Form1->Close();
+	
+	//cancel
+Orders_T->Cancel();
+Form3->Close();
+
+  //refersh
+	Orders_T->Refresh();
+	
+	//связь таблиц
+Food_T->Close();
+Food_T->MasterSource = dm->FoodCateg_DS;
+Food_T->MasterFields = "Код_категории";
+Food_T->IndexFieldNames = "Категория";
+Food_T->Open();
+  
+  //
+void __fastcall Tdm::DataModuleCreate(TObject *Sender) {
+	ADOConnection1->Connected = True;
+	DishesInOrder_T->Active = True;
+	Food_T->Active = True;
+	FoodCateg_T->Active = True;
+	Orders_T->Active = True;
+	PaymentOrders_T->Active = True;
+	Seats_T->Active = True;
+}
+
+    // 
+void __fastcall Tdm::DataModuleDestroy(TObject *Sender) {
+	ADOConnection1->Connected = False;
+	DishesInOrder_T->Active = False;
+	Food_T->Active = False;
+	FoodCateg_T->Active = False;
+	Orders_T->Active = False;
+	PaymentOrders_T->Active = False;
+	Seats_T->Active = False;
+	ADOQuery1->Active = False;
+}
