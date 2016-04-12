@@ -55,3 +55,36 @@ void __fastcall Tdm::DataModuleDestroy(TObject *Sender) {
 	Seats_T->Active = False;
 	ADOQuery1->Active = False;
 }
+
+	//On Show
+	dm->DishesInOrder_T->Close();
+	dm->DishesInOrder_T->MasterSource = dm->Orders_DS;
+	dm->DishesInOrder_T->MasterFields = "Код_заказа";
+	dm->DishesInOrder_T->IndexFieldNames = "Код_заказа";
+	dm->DishesInOrder_T->Open();
+
+void __fastcall TForm3::BitBtn1Click(TObject *Sender)
+{
+DataModule2->ADOTable1->Insert();  //добавление новой записи
+Form4->Visible=true;
+Form4->DBImage1->Picture->Bitmap->FreeImage();
+Form4->DBImage1->Picture->Bitmap = NULL;
+}
+
+
+void __fastcall TForm4::BitBtn3Click(TObject *Sender)
+{ // загрузка изображения
+if (OpenPictureDialog1->Execute())
+{
+AnsiString CurrentFile = OpenPictureDialog1->FileName;
+DBImage1->Picture->LoadFromFile(CurrentFile);
+}
+if(DBImage1->Picture->Graphic !=0)
+{
+DataModule2->ADOTable1->Edit();
+TMemoryStream* strm = new TMemoryStream();
+DBImage1->Picture->Graphic->SaveToStream(strm);
+((TGraphicField*)DataModule2->ADOTable1->FieldByName("PHOTO"))->LoadFromStream(strm);
+delete strm;
+}
+}
