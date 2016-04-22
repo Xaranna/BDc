@@ -1,0 +1,107 @@
+void __fastcall TForm3::BitBtn1Click(TObject *Sender)
+{
+DataModule2->ADOTable1->Insert();  //добавление новой записи
+Form4->Visible=true;
+Form4->DBImage1->Picture->Bitmap->FreeImage();
+Form4->DBImage1->Picture->Bitmap = NULL;
+}
+
+
+void __fastcall TForm4::BitBtn3Click(TObject *Sender)
+{ // загрузка изображения
+if (OpenPictureDialog1->Execute())
+{
+AnsiString CurrentFile = OpenPictureDialog1->FileName;
+DBImage1->Picture->LoadFromFile(CurrentFile);
+}
+if(DBImage1->Picture->Graphic !=0)
+{
+DataModule2->ADOTable1->Edit();
+TMemoryStream* strm = new TMemoryStream();
+DBImage1->Picture->Graphic->SaveToStream(strm);
+((TGraphicField*)DataModule2->ADOTable1->FieldByName("PHOTO"))->LoadFromStream(strm);
+delete strm;
+}
+}
+____________________________________________________________________________
+//загрузка jpg картинки в dbimage	
+if (OpenPictureDialog1->Execute()) {
+		Graphics::TBitmap* bmpImage = new Graphics::TBitmap();
+		AnsiString ImageJpgFile = OpenPictureDialog1->FileName;
+		TJPEGImage *ptJpg = new TJPEGImage;
+		ptJpg->LoadFromFile(ImageJpgFile);
+		bmpImage->Assign(ptJpg);
+		delete ptJpg;
+		AnsiString ImageBmpFile = ChangeFileExt(ImageJpgFile, ".bmp");
+		bmpImage->SaveToFile(ImageBmpFile);
+		DBImageEh1->Picture->LoadFromFile(ImageBmpFile);
+		delete bmpImage;
+	}
+	if (DBImageEh1->Picture->Graphic != 0) {
+		TMemoryStream* strm = new TMemoryStream();
+		DBImageEh1->Picture->Graphic->SaveToStream(strm);
+		((TGraphicField*)dm->Dishes_T->FieldByName("Фото"))->LoadFromStream
+		(strm);
+		delete strm;
+	}
+//загрузка png в dbimage
+ if (OpenPictureDialog1->Execute()) {
+	Graphics::TBitmap* bmpImage = new Graphics::TBitmap();
+	AnsiString ImagePngFile = OpenPictureDialog1->FileName;
+	TPngImage* pngIm = new TPngImage;
+	pngIm->LoadFromFile(ImagePngFile);
+	bmpImage->Assign(pngIm);
+	delete pngIm;
+	AnsiString ImageBmpFile = ChangeFileExt(ImagePngFile, ".bmp");
+	bmpImage->SaveToFile(ImageBmpFile);
+	DBImageEh1->Picture->LoadFromFile(ImageBmpFile);
+	delete bmpImage;
+	}
+	if (DBImageEh1->Picture->Graphic != 0) {
+	TMemoryStream* strm = new TMemoryStream();
+	DBImageEh1->Picture->Graphic->SaveToStream(strm);
+	((TGraphicField*)dm->Dishes_T->FieldByName("Фото"))->LoadFromStream
+	(strm);
+	delete strm;
+	}
+	_______________________________________________________________________________________________________________
+	void __fastcall TForm6::Button3Click(TObject *Sender) {
+	// загрузка изображения
+	TMemoryStream* strm = new TMemoryStream();
+	if (OpenPictureDialog1->Execute()) {
+		strm->LoadFromFile(OpenPictureDialog1->FileName);
+		strm->Seek(0, 0);
+		Graphics::TBitmap* bmpIm = new Graphics::TBitmap();
+		TJPEGImage *JpgIm = new TJPEGImage;
+		TPngImage* PngIm = new TPngImage;
+		if (*(Word*)strm->Memory == 0xD8FF) {
+			// если jpg
+			AnsiString ImageJpgFile = OpenPictureDialog1->FileName;
+			JpgIm->LoadFromFile(ImageJpgFile);
+			bmpIm->Assign(JpgIm);
+			delete JpgIm;
+			AnsiString ImageBmpFile = ChangeFileExt(ImageJpgFile, ".bmp");
+			bmpIm->SaveToFile(ImageBmpFile);
+			DBImageEh1->Picture->LoadFromFile(ImageBmpFile);
+			delete bmpIm;
+			delete PngIm;
+		}
+		else if (*(LongWord*)strm->Memory == 0x474E5089) {
+			// если png
+			AnsiString ImagePngFile = OpenPictureDialog1->FileName;
+			PngIm->LoadFromFile(ImagePngFile);
+			bmpIm->Assign(PngIm);
+			delete PngIm;
+			AnsiString ImageBmpFile = ChangeFileExt(ImagePngFile, ".bmp");
+			bmpIm->SaveToFile(ImageBmpFile);
+			DBImageEh1->Picture->LoadFromFile(ImageBmpFile);
+			delete bmpIm;
+			delete JpgIm;
+		}
+	}
+	if (DBImageEh1->Picture->Graphic != 0) {
+		DBImageEh1->Picture->Graphic->SaveToStream(strm);
+		((TGraphicField*)dm->Dishes_T->FieldByName("Фото"))->LoadFromStream
+		(strm);
+		delete strm;
+	}
