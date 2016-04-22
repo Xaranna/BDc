@@ -71,20 +71,26 @@ Form4->DBImage1->Picture->Bitmap->FreeImage();
 Form4->DBImage1->Picture->Bitmap = NULL;
 }
 
+//фильтрация 
+void __fastcall TForm14::ComboBox1Change(TObject *Sender) {
+	AnsiString s2;
+	s2 = ComboBox1->Text;
+	dm->FoodSQL_T->Filter = "Название_категории=" + QuotedStr(s2);
+	dm->FoodSQL_T->Filtered = true;
+}
 
-void __fastcall TForm4::BitBtn3Click(TObject *Sender)
-{ // загрузка изображения
-if (OpenPictureDialog1->Execute())
-{
-AnsiString CurrentFile = OpenPictureDialog1->FileName;
-DBImage1->Picture->LoadFromFile(CurrentFile);
-}
-if(DBImage1->Picture->Graphic !=0)
-{
-DataModule2->ADOTable1->Edit();
-TMemoryStream* strm = new TMemoryStream();
-DBImage1->Picture->Graphic->SaveToStream(strm);
-((TGraphicField*)DataModule2->ADOTable1->FieldByName("PHOTO"))->LoadFromStream(strm);
-delete strm;
-}
+//добавление полей в комбобокс
+	void __fastcall TForm14::ComboBox1DropDown(TObject *Sender) {
+	AnsiString s1;
+	ComboBox1->Clear();
+	dm->FoodSQL_T->Filtered = false;
+	dm->FoodSQL_T->First();
+	while (!dm->FoodSQL_T->Eof) {
+		s1 = dm->FoodSQL_T->FieldByName("Название_категории")->AsString;
+		if (ComboBox1->Items->IndexOf(s1) == -1) {
+			// если строки нет в комбо - добавляем
+			ComboBox1->Items->Add(s1);
+		}
+		dm->FoodSQL_T->Next();
+	}
 }
